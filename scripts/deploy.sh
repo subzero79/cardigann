@@ -51,5 +51,3 @@ equinox_release
 
 echo "Pushing docker image ${DOCKER_TAG}"
 docker push ${DOCKER_TAG}
-
-
