@@ -23,8 +23,3 @@ deploy:
     - master
     - equinox
     condition: "$TRAVIS_OS_NAME = linux"
-before_install:
-- openssl aes-256-cbc -K $encrypted_ee4987f84485_key -iv $encrypted_ee4987f84485_iv
-  -in equinox.key.enc -out equinox.key -d
-- openssl aes-256-cbc -K $encrypted_ee4987f84485_key -iv $encrypted_ee4987f84485_iv
-  -in equinox.yml.enc -out equinox.yml -d
