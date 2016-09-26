@@ -12,6 +12,9 @@ test:
 build: server/static.go indexer/definitions.go
 	go build -o $(BIN) -ldflags="$(FLAGS)" *.go
 
+$(BIN)-linux-amd64: $(SRC)
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $@ -ldflags="$(FLAGS)" *.go
+
 test-defs:
 	find definitions -name '*.yml' -print -exec go run *.go test {} \;
 
@@ -35,23 +38,3 @@ clean:
 run-dev:
 	cd web/; npm start &
 	rerun $(PREFIX) server --debug --passphrase "llamasrock"
-
-EQUINOX_CHANNEL ?= edge
-release: server/static.go indexer/definitions.go
-	equinox release \
-	--version="$(VERSION)" \
-	--config ./equinox.yml \
-	--channel $(EQUINOX_CHANNEL) \
-	-- -ldflags="$(FLAGS)" $(PREFIX)
-
-cacert.pem:
-	wget -N https://curl.haxx.se/ca/cacert.pem
-
-$(BIN)-linux-amd64: $(SRC)
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $@ -ldflags="$(FLAGS)" *.go
-
-DOCKER_TAG ?= cardigann:$(VERSION)
-
-docker: $(BIN)-linux-amd64 cacert.pem
-	docker build -t $(DOCKER_TAG) .
-	docker run --rm -it $(DOCKER_TAG) version
