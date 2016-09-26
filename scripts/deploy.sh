@@ -1,20 +1,18 @@
 #!/bin/bash
 set -eu -o pipefail
 
-# DOCKER_TAG ?= cardigann:$(VERSION)
+DOCKER_TAG=${DOCKER_TAG:-$IMAGE:$COMMIT}
 
 # docker: $(BIN)-linux-amd64 cacert.pem
-# 	docker build -t $(DOCKER_TAG) .
-# 	docker run --rm -it $(DOCKER_TAG) version
-
 # wget -N https://curl.haxx.se/ca/cacert.pem
 
 docker_build() {
   touch server/static.go
   make cardigann-linux-amd64
   file cardigann-linux-amd64
-  make docker DOCKER_TAG=${IMAGE}:${COMMIT}
-  docker tag ${IMAGE}:${COMMIT} ${IMAGE}:latest
+  docker build -t
+  docker run --rm -it "${DOCKER_TAG}" version
+  docker tag "${DOCKER_TAG}" "${IMAGE}:latest"
 }
 
 docker_login() {
