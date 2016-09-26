@@ -36,11 +36,8 @@ run-dev:
 	cd web/; npm start &
 	rerun $(PREFIX) server --debug --passphrase "llamasrock"
 
-defs.zip: $(shell find definitions/)
-	zip defs.zip definitions/*
-
 EQUINOX_CHANNEL ?= edge
-release: build
+release: server/static.go indexer/definitions.go
 	equinox release \
 	--version="$(VERSION)" \
 	--config ./equinox.yml \
@@ -51,7 +48,7 @@ cacert.pem:
 	wget -N https://curl.haxx.se/ca/cacert.pem
 
 $(BIN)-linux-amd64: $(SRC)
-	CGO_ENABLED=0  GOOS=linux   GOARCH=amd64             go build -o $@ -ldflags="$(FLAGS)" *.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $@ -ldflags="$(FLAGS)" *.go
 
 DOCKER_TAG ?= cardigann:$(VERSION)
 
