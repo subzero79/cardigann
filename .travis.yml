@@ -3,6 +3,8 @@ go:
 - 1.7
 services:
 - docker
+git:
+  depth: 150
 os:
 - linux
 - osx
