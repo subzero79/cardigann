@@ -10,7 +10,6 @@ download_cacert() {
 }
 
 docker_build() {
-  echo "Building docker image ${DOCKER_TAG}"
   touch server/static.go
   make cardigann-linux-amd64
   file cardigann-linux-amd64
@@ -34,25 +33,21 @@ download_equinox() {
 }
 
 equinox_release() {
-  local channel="$1"
-  local version="$2"
-  echo "Releasing version $version to equinox.io $channel"
+  download_equinox
   ./equinox release \
-    --version="$version" \
+    --version="$VERSION" \
     --config ./equinox.yml \
-    --channel "$channel" \
+    --channel "edge" \
     -- -ldflags="-X main.Version=$version -s -w" \
     github.com/cardigann/cardigann
 }
 
+echo "Building docker image ${DOCKER_TAG}"
 docker_build
 docker_login
-download_equinox
-equinox_release "edge" "$VERSION"
 
-if [[ "$TRAVIS_TAG" =~ ^v ]] ; then
-  equinox_release "stable" "$VERSION"
-fi
+echo "Releasing version $VERSION to equinox.io"
+equinox_release "$VERSION"
 
 echo "Pushing docker image ${DOCKER_IMAGE}"
 docker push ${DOCKER_IMAGE}
